@@ -1,0 +1,2 @@
+remoteWrite:
+  - url: "http://vm-single-victoria-metrics-single-server.monitoring.svc:8428/api/v1/write"

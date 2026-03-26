@@ -1,0 +1,58 @@
+global:
+  resolve_timeout: 5m
+
+inhibit_rules:
+- equal:
+  - namespace
+  - alertname
+  source_matchers:
+  - severity = critical
+  target_matchers:
+  - severity =~ warning|info
+- equal:
+  - namespace
+  - alertname
+  source_matchers:
+  - severity = warning
+  target_matchers:
+  - severity = info
+- equal:
+  - namespace
+  source_matchers:
+  - alertname = InfoInhibitor
+  target_matchers:
+  - severity = info
+- target_matchers:
+  - alertname = InfoInhibitor
+
+receivers:
+- name: "null"
+
+- name: "telegram"
+  telegram_configs:
+  - bot_token: "8646339814:AAGdkug_W0_dqGYOCAjlJ-1rkuB2irPY0U4"
+    chat_id: 129453095
+    parse_mode: "HTML"
+    message: |
+      🚨 <b>{{ .CommonLabels.alertname }}</b>
+
+      <b>Status:</b> {{ .Status }}
+      <b>Severity:</b> {{ .CommonLabels.severity }}
+
+      <b>Summary:</b> {{ .CommonAnnotations.summary }}
+      <b>Description:</b> {{ .CommonAnnotations.description }}
+
+route:
+  group_by:
+  - namespace
+  group_interval: 5m
+  group_wait: 30s
+  receiver: "telegram"
+  repeat_interval: 12h
+  routes:
+  - matchers:
+    - alertname = "Watchdog"
+    receiver: "null"
+
+templates:
+- /etc/alertmanager/config/*.tmpl

@@ -1,0 +1,50 @@
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: telegram
+      group_by:
+        - namespace
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      routes:
+        - matchers:
+            - alertname = "Watchdog"
+          receiver: "null"
+
+    receivers:
+      - name: "null"
+
+      - name: telegram
+        telegram_configs:
+          - bot_token: "+8646339814:AAGdkug_W0_dqGYOCAjlJ-1rkuB2irPY0U4"
+            chat_id: 129453095
+            parse_mode: HTML
+            http_config:
+              proxy_url: "http://10.50.142.225:10809"
+            message: |
+              🚨 <b>{{ .CommonLabels.alertname }}</b>
+
+              <b>Status:</b> {{ .Status }}
+              <b>Severity:</b> {{ .CommonLabels.severity }}
+
+              <b>Summary:</b> {{ .CommonAnnotations.summary }}
+              <b>Description:</b> {{ .CommonAnnotations.description }}
+
+  alertmanagerSpec:
+    containers:
+      - name: alertmanager
+        env:
+          - name: HTTP_PROXY
+            value: "http://10.50.142.225:10809"
+          - name: HTTPS_PROXY
+            value: "http://10.50.142.225:10809"
+          - name: NO_PROXY
+            value: "localhost,127.0.0.1,.svc,.cluster.local,10.96.0.0/12,10.244.0.0/16"
+#prometheus:
+# prometheusSpec:
+#    remoteWrite:
+#      - url: "http://vm-single-victoria-metrics-single-server.monitoring.svc:8428/api/v1/write"

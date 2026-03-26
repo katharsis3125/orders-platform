@@ -1,0 +1,3 @@
+curl -v -X POST "https://api.telegram.org/bot8646339814:AAGdkug_W0_dqGYOCAjlJ-1rkuB2irPY0U4/sendMessage" \
+  -d "chat_id=129453095" \
+  -d "text=test from kubernetes"

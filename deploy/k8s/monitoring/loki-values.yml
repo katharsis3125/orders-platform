@@ -1,0 +1,29 @@
+deploymentMode: SingleBinary
+
+loki:
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
+
+singleBinary:
+  replicas: 1
+
+# для учебного стенда и minikube
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
+
+chunksCache:
+  enabled: false
+
+resultsCache:
+  enabled: false
+
+gateway:
+  enabled: false
+
+minio:
+  enabled: true
